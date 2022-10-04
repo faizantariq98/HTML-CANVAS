@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>canvas</title>
+</head>
+<body>
+    <canvas id="draw" width="800" height="800"></canvas>
+    <style>
+        html,body{
+            margin: 0;
+        }
+    </style>
+    <script>
+        const canvas=document.querySelector('#draw');
+        const cts=canvas.getContext('2d');
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+
+        cts.strokeStyle='#ffc600';
+        cts.lineJoin='round';
+        cts.lineCap='round';
+        cts.lineWidth=1;
+       // cts.globalCompositeOperation='lighter';
+
+        let isDrawing=false;
+        let lastX=0;
+        let lastY=0;
+        let hue=0;
+        let direction=true;
+
+        function draw(e){
+            if(!isDrawing){
+                return;
+            }
+        
+            cts.strokeStyle=`hsl(${hue},100%,50%)`;
+
+            cts.beginPath();
+
+            cts.moveTo(lastX,lastY);
+
+            cts.lineTo(e.offsetX,e.offsetY)
+
+            cts.stroke();
+
+            [lastX,lastY]=[e.offsetX,e.offsetY];
+
+            hue++;
+
+            if(hue>350)hue=0;
+
+            if(cts.lineWidth>=50 || cts.lineWidth<=1){
+                direction=!direction;
+            }
+            if(direction){
+                cts.lineWidth++;
+            }
+            else{
+                cts.lineWidth--;
+            }
+        }
+
+        canvas.addEventListener('mousedown',(e)=>{
+            isDrawing=true;
+            [lastX,lastY]=[e.offsetX,e.offsetY];
+            draw(e);
+        });
+        canvas.addEventListener('mousemove',draw);
+        canvas.addEventListener('mouseup',()=>isDrawing=false);
+        canvas.addEventListener('mouseout',()=>isDrawing=false);
+
+    </script>
+</body>
+</html>
